@@ -12,5 +12,5 @@ export const config = {
   weatherRefreshInterval: 1800000,
   
   // Количество видимых карточек одновременно
-  visibleCards: 3
+  visibleCards: 6
 }

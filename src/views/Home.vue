@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <!-- Main grid with 3 company cards -->
+    <!-- Main grid with 6 company cards (2 rows x 3 columns) -->
     <div class="cards-grid">
       <TransitionGroup name="slide">
         <DashboardCard
@@ -91,8 +91,8 @@ onUnmounted(() => {
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 1fr;
-  gap: 2rem;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1.5rem;
   height: 100%;
   overflow: hidden;
   position: relative;
@@ -117,7 +117,8 @@ onUnmounted(() => {
 
 .slide-leave-active {
   position: absolute;
-  width: calc((100% - 4rem) / 3);
+  width: calc((100% - 3rem) / 3);
+  height: calc((100% - 1.5rem) / 2);
 }
 
 .sidebar {
