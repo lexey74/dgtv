@@ -34,10 +34,10 @@
             />
             <text
               :x="date.adjustedX"
-              :y="chartHeight + 22"
+              :y="chartHeight + 18"
               text-anchor="middle"
               fill="rgba(255, 255, 255, 0.5)"
-              font-size="16"
+              font-size="13"
               font-family="system-ui, -apple-system, sans-serif"
             >
               {{ date.label }}
@@ -88,9 +88,9 @@ const monthlyData = ref([])
 const totalOrders = ref(0)
 const startDate = ref(null)
 
-// Размеры графика (уменьшены для 2х рядов)
-const chartWidth = 400
-const chartHeight = 250
+// Размеры графика (компактные для 2х рядов)
+const chartWidth = 350
+const chartHeight = 180
 
 /**
  * Форматирование чисел с пробелами (1920 -> 1 920)
@@ -223,71 +223,74 @@ watch(
 <style scoped>
 .dashboard-card {
   background: rgba(30, 30, 35, 0.95);
-  border-radius: 10px;
-  padding: 1rem 0.75rem;
+  border-radius: 8px;
+  padding: 0.6rem 0.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.3rem;
   border: 2px solid;
   border-color: rgba(255, 255, 255, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   height: 100%;
+  overflow: hidden;
 }
 
 .dashboard-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 .card-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding-bottom: 0.4rem;
+  padding-bottom: 0.3rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .title {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #fff;
   margin: 0;
   text-align: center;
+  line-height: 1.2;
 }
 
 .stats-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0.3rem 0;
+  padding: 0.2rem 0;
 }
 
 .stats-section.today {
-  padding: 0.4rem 0;
+  padding: 0.25rem 0;
 }
 
 .stats-section.total {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 0.5rem;
+  padding-top: 0.3rem;
 }
 
 .stat-label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 0.3rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.2rem;
   font-weight: 600;
 }
 
 .stat-value {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: bold;
   color: #fff;
+  line-height: 1;
 }
 
 .stat-value.main {
-  font-size: 2rem;
+  font-size: 1.6rem;
   line-height: 1;
 }
 
@@ -310,17 +313,17 @@ watch(
 .chart-section {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.3rem 0;
+  gap: 0.2rem;
+  padding: 0.2rem 0;
   flex: 1;
   min-height: 0;
 }
 
 .chart-label {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.5px;
   text-align: center;
   font-weight: 600;
 }
@@ -330,15 +333,15 @@ watch(
   display: flex;
   align-items: stretch;
   justify-content: center;
-  min-height: 200px;
-  margin: 0 -0.5rem;
+  min-height: 150px;
+  margin: 0 -0.3rem;
 }
 
 .chart {
   width: 100%;
   height: 100%;
-  min-height: 200px;
-  max-height: 350px;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  min-height: 150px;
+  max-height: 280px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
 }
 </style>

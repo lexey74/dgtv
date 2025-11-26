@@ -2,15 +2,17 @@
   <div class="dashboard">
     <!-- Main grid with 6 company cards (2 rows x 3 columns) -->
     <div class="cards-grid">
-      <TransitionGroup name="slide">
-        <DashboardCard
-          v-for="client in visibleClients"
-          :key="client.id"
-          :client-id="client.id"
-          :client-name="client.name"
-          :color="client.color"
-        />
-      </TransitionGroup>
+      <Transition name="fade" mode="out-in">
+        <div :key="currentIndex" class="cards-container">
+          <DashboardCard
+            v-for="client in visibleClients"
+            :key="client.id"
+            :client-id="client.id"
+            :client-name="client.name"
+            :color="client.color"
+          />
+        </div>
+      </Transition>
     </div>
 
     <!-- Right sidebar with widgets -->
@@ -40,9 +42,14 @@ const visibleClients = computed(() => {
   const start = currentIndex.value
   const result = []
   
+  // Проверяем что список клиентов загружен
+  if (!clients.value || clients.value.length === 0) {
+    return []
+  }
+  
   for (let i = 0; i < config.visibleCards; i++) {
-    const index = (start + i) % clients.length
-    result.push(clients[index])
+    const index = (start + i) % clients.value.length
+    result.push(clients.value[index])
   }
   
   return result
@@ -50,7 +57,11 @@ const visibleClients = computed(() => {
 
 // Функция переключения на следующие карточки
 const nextSlide = () => {
-  currentIndex.value = (currentIndex.value + config.visibleCards) % clients.length
+  if (!clients.value || clients.value.length === 0) {
+    return
+  }
+  
+  currentIndex.value = (currentIndex.value + config.visibleCards) % clients.value.length
   console.log(`🔄 Карусель: показываем клиентов ${currentIndex.value}-${currentIndex.value + config.visibleCards - 1}`)
 }
 
@@ -79,46 +90,52 @@ onUnmounted(() => {
 <style scoped>
 .dashboard {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 2rem;
-  padding: 2rem;
+  grid-template-columns: 1fr 380px;
+  gap: 1rem;
+  padding: 1rem;
   background: #0a0a0f;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 1.5rem;
   height: 100%;
   overflow: hidden;
   position: relative;
 }
 
-/* Анимация слайдов */
-.slide-move,
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 1rem;
+  height: 100%;
 }
 
-.slide-enter-from {
+/* Анимация fade для всех 6 карточек одновременно */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-enter-from {
   opacity: 0;
-  transform: translateX(100%);
+  transform: translateX(30px);
 }
 
-.slide-leave-to {
+.fade-leave-to {
   opacity: 0;
-  transform: translateX(-100%);
+  transform: translateX(-30px);
 }
 
-.slide-leave-active {
+.fade-leave-active {
   position: absolute;
-  width: calc((100% - 3rem) / 3);
-  height: calc((100% - 1.5rem) / 2);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .sidebar {
