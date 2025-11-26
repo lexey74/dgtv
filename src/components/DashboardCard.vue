@@ -44,6 +44,31 @@
             </text>
           </g>
           
+          <!-- Горизонтальные линии для max и min значений -->
+          <g v-for="(line, index) in horizontalLines" :key="`h-${index}`">
+            <line
+              :x1="0"
+              :y1="line.y"
+              :x2="chartWidth"
+              :y2="line.y"
+              stroke="rgba(255, 255, 255, 0.1)"
+              stroke-width="1"
+              stroke-dasharray="4,4"
+            />
+            <text
+              :x="-10"
+              :y="line.y + (index === 0 ? -20 : -10)"
+              text-anchor="end"
+              dominant-baseline="middle"
+              fill="rgba(255, 255, 255, 0.5)"
+              font-size="11"
+              font-family="system-ui, -apple-system, sans-serif"
+              :transform="`rotate(-90, -10, ${line.y + (index === 0 ? -20 : -10)})`"
+            >
+              {{ line.label }}
+            </text>
+          </g>
+          
           <!-- График с заливкой -->
           <path
             :d="chartPath"
@@ -147,6 +172,37 @@ const gridDates = computed(() => {
   }
   
   return dates
+})
+
+/**
+ * Вычисление горизонтальных линий для max и min значений
+ */
+const horizontalLines = computed(() => {
+  if (!monthlyData.value || monthlyData.value.length === 0) {
+    return []
+  }
+  
+  const points = monthlyData.value
+  const max = Math.max(...points)
+  const min = Math.min(...points)
+  const range = max - min || 1
+  
+  // Вычисляем Y координаты для max и min
+  const yMax = chartHeight - ((max - min) / range) * (chartHeight - 20)
+  const yMin = chartHeight - ((min - min) / range) * (chartHeight - 20)
+  
+  return [
+    {
+      y: yMax,
+      value: max,
+      label: formatNumber(max)
+    },
+    {
+      y: yMin,
+      value: min,
+      label: formatNumber(min)
+    }
+  ]
 })
 
 /**
