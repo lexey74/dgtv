@@ -207,6 +207,9 @@ GET /clients/{client_id}/orders/dashboard
 GET /clients
 ```
 
+**Параметры запроса:**
+- `active` (boolean, optional) - Фильтр по активным клиентам (по умолчанию true)
+
 **Response:**
 ```json
 {
@@ -215,24 +218,34 @@ GET /clients
       "id": "yakitoriya",
       "name": "Якитория",
       "color": "#dc2626",
-      "active": true
+      "active": true,
+      "created_at": "2020-01-01T00:00:00Z"
     },
     {
       "id": "serviceguru",
       "name": "ServiceGuru",
       "color": "#22c55e",
-      "active": true
+      "active": true,
+      "created_at": "2020-03-15T00:00:00Z"
     },
     {
       "id": "mkk",
       "name": "МКК",
       "color": "#f59e0b",
-      "active": true
+      "active": true,
+      "created_at": "2020-06-01T00:00:00Z"
     }
   ],
-  "total": 3
+  "total": 3,
+  "active_count": 3,
+  "updated_at": "2025-11-26T14:30:00Z"
 }
 ```
+
+**Коды ответа:**
+- `200 OK` - Успешно
+- `401 Unauthorized` - Неверный токен
+- `500 Internal Server Error` - Ошибка сервера
 
 ---
 

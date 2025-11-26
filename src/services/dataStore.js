@@ -1,30 +1,40 @@
 import { ref } from 'vue'
-import { getClientDashboardSafe } from './ordersApi.js'
+import { getClientDashboardSafe, getClientsList } from './ordersApi.js'
 import { config } from '../config.js'
 
 // Централизованное хранилище данных для всех клиентов
 const clientsData = ref(new Map())
+const clients = ref([]) // Теперь clients - реактивный массив, загружаемый с API
 let updateInterval = null
 
-// Список всех клиентов
-const clients = [
-  { id: 'yakitoriya', name: 'Якитория', color: '#dc2626' },
-  { id: 'serviceguru', name: 'ServiceGuru', color: '#22c55e' },
-  { id: 'mkk', name: 'МКК', color: '#3b82f6' },
-  { id: 'eggselent', name: 'Eggselent', color: '#a855f7' },
-  { id: 'wasabi', range: 'Wasabi', color: '#06b6d4' },
-  { id: 'menza', name: 'Menza', color: '#f59e0b' },
-  { id: 'bakinsky', name: 'Бакинский бульвар', color: '#ef4444' },
-  { id: 'zharpizza', name: 'Жар Пицца', color: '#10b981' },
-  { id: 'barankin', name: 'Баранкин', color: '#8b5cf6' },
-  { id: 'ligashashlikov', name: 'Лига Шашлыков', color: '#f97316' }
-]
+// Функция загрузки списка клиентов с сервера
+async function fetchClientsList() {
+  console.log('📋 Загрузка списка клиентов с сервера...')
+  
+  try {
+    const response = await getClientsList()
+    clients.value = response.clients.filter(client => client.active)
+    console.log(`✅ Загружено клиентов: ${clients.value.length}`)
+    return clients.value
+  } catch (error) {
+    console.error('❌ Ошибка загрузки списка клиентов:', error)
+    // Возвращаем пустой массив, чтобы не падало приложение
+    clients.value = []
+    return []
+  }
+}
 
 // Функция загрузки данных для всех клиентов
 async function fetchAllClientsData() {
   console.log('🔄 Загрузка данных для всех клиентов...', new Date().toLocaleTimeString())
   
-  const promises = clients.map(async (client) => {
+  // Если список клиентов пустой, не делаем запросы
+  if (clients.value.length === 0) {
+    console.log('⚠️ Список клиентов пуст, пропускаем загрузку данных')
+    return
+  }
+  
+  const promises = clients.value.map(async (client) => {
     try {
       const data = await getClientDashboardSafe(client.id, client.name, client.color)
       clientsData.value.set(client.id, data)
@@ -44,20 +54,26 @@ export function getClientData(clientId) {
 }
 
 // Инициализация автоматического обновления данных
-export function initDataStore() {
+export async function initDataStore() {
   console.log('🚀 Инициализация хранилища данных')
   console.log(`⏱️ Интервал обновления: ${config.apiRefreshInterval / 1000} секунд`)
   
-  // Первоначальная загрузка
-  fetchAllClientsData()
+  // Сначала загружаем список клиентов с сервера
+  await fetchClientsList()
+  
+  // Затем загружаем данные для всех клиентов
+  await fetchAllClientsData()
   
   // Периодическое обновление
   if (updateInterval) {
     clearInterval(updateInterval)
   }
   
-  updateInterval = setInterval(() => {
-    fetchAllClientsData()
+  updateInterval = setInterval(async () => {
+    // Периодически обновляем список клиентов (могут добавиться новые)
+    await fetchClientsList()
+    // И данные для всех клиентов
+    await fetchAllClientsData()
   }, config.apiRefreshInterval)
 }
 
