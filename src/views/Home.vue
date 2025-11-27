@@ -92,7 +92,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 1fr clamp(300px, 20vw, 380px);
   gap: 1rem;
   padding: 1rem;
   background: #0a0a0f;
@@ -141,9 +141,10 @@ onUnmounted(() => {
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 1rem 0;
-  overflow-y: auto;
+  gap: 1.5rem;
+  padding: 0.5rem 0;
+  overflow: hidden;
+  height: 100%;
 }
 
 /* Scrollbar styling */

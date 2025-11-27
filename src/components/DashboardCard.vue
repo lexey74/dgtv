@@ -246,19 +246,30 @@ const updateFromCache = () => {
   const data = getClientData(props.clientId)
   
   if (data) {
-    todayOrders.value = data.today.orders_count
-    monthlyData.value = data.monthly.daily_orders
-    totalOrders.value = data.total.orders_count
+    // Обновляем данные за сегодня
+    if (data.today) {
+      todayOrders.value = data.today.orders_count
+    }
     
-    // Сохраняем дату начала периода (30 дней назад)
-    const fromDate = data.monthly.period?.from
-    if (fromDate) {
-      startDate.value = new Date(fromDate)
-    } else {
-      // Если дата не пришла, вычисляем 30 дней назад
-      const date = new Date()
-      date.setDate(date.getDate() - 30)
-      startDate.value = date
+    // Обновляем данные за месяц
+    if (data.monthly) {
+      monthlyData.value = data.monthly.daily_orders
+      
+      // Сохраняем дату начала периода (30 дней назад)
+      const fromDate = data.monthly.period?.from
+      if (fromDate) {
+        startDate.value = new Date(fromDate)
+      } else {
+        // Если дата не пришла, вычисляем 30 дней назад
+        const date = new Date()
+        date.setDate(date.getDate() - 30)
+        startDate.value = date
+      }
+    }
+    
+    // Обновляем данные за все время
+    if (data.total) {
+      totalOrders.value = data.total.orders_count
     }
   }
 }
@@ -305,8 +316,8 @@ watch(
 }
 
 .title {
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1.5rem;
+  font-weight: 900;
   color: #fff;
   margin: 0;
   text-align: center;

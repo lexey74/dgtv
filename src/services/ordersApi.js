@@ -56,7 +56,12 @@ async function fetchWithTimeout(url, options = {}) {
  */
 export async function getTodayOrders(clientId) {
   const url = `${API_CONFIG.baseUrl}/clients/${clientId}/orders/today`;
-  return await fetchWithTimeout(url);
+  try {
+    return await fetchWithTimeout(url);
+  } catch (error) {
+    console.warn(`API недоступен для ${clientId}, используем мок-данные за сегодня`);
+    return generateMockTodayData();
+  }
 }
 
 /**
@@ -74,17 +79,27 @@ export async function getMonthlyOrders(clientId, options = {}) {
   });
 
   const url = `${API_CONFIG.baseUrl}/clients/${clientId}/orders/monthly?${params}`;
-  return await fetchWithTimeout(url);
+  try {
+    return await fetchWithTimeout(url);
+  } catch (error) {
+    console.warn(`API недоступен для ${clientId}, используем мок-данные за месяц`);
+    return generateMockMonthlyData();
+  }
 }
 
 /**
- * Получить общую статистику за все время
+ * Получить общую статистику за все время (без текущей даты)
  * @param {string} clientId - ID клиента
  * @returns {Promise<Object>} Статистика за все время
  */
 export async function getTotalOrders(clientId) {
-  const url = `${API_CONFIG.baseUrl}/clients/${clientId}/orders/total`;
-  return await fetchWithTimeout(url);
+  const url = `${API_CONFIG.baseUrl}/clients/${clientId}/orders/total?exclude_today=true`;
+  try {
+    return await fetchWithTimeout(url);
+  } catch (error) {
+    console.warn(`API недоступен для ${clientId}, используем мок-данные за все время`);
+    return generateMockTotalData();
+  }
 }
 
 /**
@@ -156,8 +171,73 @@ export async function getClientsList(options = { active: true }) {
 }
 
 /**
+ * Мок-функция для генерации данных за сегодня
+ */
+function generateMockTodayData() {
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  
+  // Генерируем случайное количество заказов за сегодня (800-2500)
+  const todayOrders = Math.floor(Math.random() * 1700) + 800;
+  
+  return {
+    date: todayStr,
+    orders_count: todayOrders,
+    period: {
+      from: `${todayStr}T00:00:00Z`,
+      to: new Date().toISOString()
+    },
+    updated_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Мок-функция для генерации данных за месяц
+ */
+function generateMockMonthlyData() {
+  const today = new Date();
+  
+  // Генерируем данные за 30 дней
+  const dailyOrders = [];
+  let total = 0;
+  
+  for (let i = 29; i >= 0; i--) {
+    const orders = Math.floor(Math.random() * 1500) + 900;
+    dailyOrders.push(orders);
+    total += orders;
+  }
+  
+  return {
+    period: {
+      from: new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      to: new Date(today.getTime() - 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    },
+    daily_orders: dailyOrders,
+    total: total,
+    average: Math.round(total / 30 * 100) / 100,
+    updated_at: new Date().toISOString()
+  };
+}
+
+/**
+ * Мок-функция для генерации данных за все время (без текущей даты)
+ */
+function generateMockTotalData() {
+  // Общее количество заказов за все время (от 2М до 7М) БЕЗ сегодняшнего дня
+  const totalAllTime = Math.floor(Math.random() * 5000000) + 2000000;
+  
+  return {
+    orders_count: totalAllTime,
+    since: '2020-01-01',
+    exclude_today: true,
+    updated_at: new Date().toISOString()
+  };
+}
+
+/**
  * Мок-функция для генерации тестовых данных (для разработки)
  * Возвращает данные в формате API
+ * @deprecated Используйте раздельные функции getTodayOrders, getMonthlyOrders, getTotalOrders
  */
 export function generateMockData(clientId, clientName, color) {
   const today = new Date();

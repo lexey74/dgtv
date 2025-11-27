@@ -169,6 +169,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 0 0 auto;
+  max-height: 20vh;
 }
 
 .loading,
@@ -199,7 +201,7 @@ onMounted(() => {
 }
 
 .temperature {
-  font-size: 2rem;
+  font-size: clamp(1.2rem, 2vw, 2rem);
   font-weight: bold;
   color: white;
 }
@@ -213,8 +215,8 @@ onMounted(() => {
 }
 
 .weather-icon {
-  width: 80px;
-  height: 80px;
+  width: clamp(50px, 8vw, 80px);
+  height: clamp(50px, 8vw, 80px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -228,7 +230,7 @@ onMounted(() => {
 }
 
 .time-label {
-  font-size: 0.9rem;
+  font-size: clamp(0.7rem, 1vw, 0.9rem);
   color: rgba(255, 255, 255, 0.6);
   margin-top: 0;
 }

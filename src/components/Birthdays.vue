@@ -51,8 +51,11 @@ onMounted(() => {
 .birthdays-widget {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .separator {
@@ -64,32 +67,54 @@ onMounted(() => {
     transparent 100%
   );
   border-radius: 1px;
+  flex-shrink: 0;
 }
 
 .birthdays-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: clamp(0.4rem, 1vh, 0.75rem);
   width: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.birthdays-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.birthdays-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.birthdays-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.birthdays-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .birthday-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
+  padding: clamp(0.3rem, 0.8vh, 0.5rem) clamp(0.5rem, 1.5vw, 1rem);
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
+  flex-shrink: 0;
 }
 
 .name {
-  font-size: 1.3rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
   color: white;
   font-weight: 500;
 }
 
 .date {
-  font-size: 1.3rem;
+  font-size: clamp(0.9rem, 1.5vw, 1.3rem);
   color: rgba(255, 255, 255, 0.7);
 }
 </style>

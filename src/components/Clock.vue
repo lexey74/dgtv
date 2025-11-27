@@ -101,11 +101,15 @@ onUnmounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex: 0 0 auto;
+  max-height: 35vh;
 }
 
 .clock {
-  width: 350px;
-  height: 350px;
+  width: 100%;
+  height: 100%;
+  max-width: 350px;
+  max-height: 350px;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
 }
 </style>
